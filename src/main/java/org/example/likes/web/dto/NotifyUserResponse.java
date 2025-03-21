@@ -10,5 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotifyUserResponse {
+    private String receiverId;
+
+    private String senderId;
+
     private String message;
+
+    private String date;
 }

@@ -22,10 +22,10 @@ public class Notification {
     private UUID receiverId;
 
     @Column(nullable = false)
-    private String message;
+    private UUID senderId;
 
     @Column(nullable = false)
-    private boolean isRead = false;
+    private String message;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

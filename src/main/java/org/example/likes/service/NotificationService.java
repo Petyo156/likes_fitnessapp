@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class NotificationService {
     }
 
     public NotifyUserResponse notifyUserForLikedProgram(NotifyUserRequest notifyUserRequest) {
-        if(notifyUserRequest.getSenderId().equals(notifyUserRequest.getReceiverId())) {
+        if (notifyUserRequest.getSenderId().equals(notifyUserRequest.getReceiverId())) {
             throw new UserCannotSendNotificationToHimselfException(ExceptionMessages.USER_CANNOT_SEND_NOTIFICATION_TO_HIMSELF);
         }
 
@@ -37,6 +38,15 @@ public class NotificationService {
         return DtoMapper.fromNotifyUserRequest(notifyUserRequest);
     }
 
+    public List<Notification> getNotificationsForUser(String userId) {
+        try {
+            return notificationRepository.getAllByReceiverIdOrderByCreatedAtDesc(UUID.fromString(userId));
+        } catch (Exception e) {
+            log.error("Couldn't parse String to UUID: {}", e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     private Notification initializeNotification(NotifyUserRequest notifyUserRequest) {
         return Notification.builder()
                 .createdAt(LocalDateTime.now())
@@ -44,10 +54,6 @@ public class NotificationService {
                 .message(notifyUserRequest.getMessage())
                 .senderId(UUID.fromString(notifyUserRequest.getSenderId()))
                 .build();
-    }
-
-    public List<Notification> getNotificationsForUser(String userId) {
-        return notificationRepository.getAllByReceiverIdOrderByCreatedAt(UUID.fromString(userId));
     }
 }
 
